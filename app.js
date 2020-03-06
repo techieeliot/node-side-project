@@ -5,6 +5,7 @@ const app      = express();
 const port     = 3000;
 const API_URL  = 'https://api.kanye.rest/';
 const dotenv   = require('dotenv').config();
+let currentQuote = '';
 
 
 const conn = mysql.createConnection({
@@ -14,6 +15,16 @@ const conn = mysql.createConnection({
         database: 'kanye'
 
 })
+
+const  addMyQuote = (quote) => {
+    conn.connect(err => console.error(err));
+    const querySting = `insert into quotes(quote, created_at) values('${quote}', now())`;
+    conn.query(querySting, (err, results, fields) => {
+        if(err) console.log(err)
+    })
+    conn.end();
+
+}
 
 
 // app.get('/', (req, res) => res.sendFile(__dirname +
@@ -27,16 +38,23 @@ const conn = mysql.createConnection({
 app.get('/', (req, res) => {
     axios.get(API_URL)
     .then(response => {
-        var quote = response.data.quote;
+        currentQuote = response.data.quote;
         res.send(`<header>
                         <h1>Kanye Quotes</h2>
                 </header>
-                <section id='output'>${quote}</section>`
+                <section id='output'>${currentQuote}</section>`
         );
-        console.log(quote);
+        console.log(currentQuote);
     })
     .catch(err => console.log('Error: ', err))
 })
+
+app.get('/add', (req, res) => {
+    console.log(currentQuote);
+    addMyQuote(currentQuote);
+    res.sendStatus(200);
+})
+
 
 app.get('/best', (req, res) => {
     conn.connect(function(err) {
@@ -46,6 +64,7 @@ app.get('/best', (req, res) => {
         }
        
         res.send('connected as id ' + conn.threadId);
+
       });
     // conn.connect();
     // conn.query('select 21 as test', (err, 
