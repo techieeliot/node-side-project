@@ -1,8 +1,20 @@
-const express = require('express');
-const axios = require('axios');
-const app = express();
-const port = 3000;
-const API_URL = 'https://api.kanye.rest/';
+const express  = require('express');
+const axios    = require('axios');
+const mysql    = require('mysql');
+const app      = express();
+const port     = 3000;
+const API_URL  = 'https://api.kanye.rest/';
+const dotenv   = require('dotenv').config();
+
+
+const conn = mysql.createConnection({
+        host:     'localhost',
+        user:     'root',
+        password:  process.env.PASS,
+        database: 'kanye'
+
+})
+
 
 // app.get('/', (req, res) => res.sendFile(__dirname +
 //     '/views/index.html'
@@ -26,9 +38,23 @@ app.get('/', (req, res) => {
     .catch(err => console.log('Error: ', err))
 })
 
-
+app.get('/best', (req, res) => {
+    conn.connect(function(err) {
+        if (err) {
+          console.error('error connecting: ' + err.stack);
+          return;
+        }
+       
+        res.send('connected as id ' + conn.threadId);
+      });
+    // conn.connect();
+    // conn.query('select 21 as test', (err, 
+    //     results, fields) => {
+    //         if(err) console.log(err)
+    //         console.log(results)
+    //         res.send('ok');
+    //         conn.end()
+    //     })
+})
 
 app.listen(port, ()=> console.log(`Your app is listening on port ${port}!`))
-
-app.get('/', (req, res) => {
-})
