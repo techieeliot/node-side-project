@@ -10,8 +10,8 @@ let currentQuote = '';
 
 const conn = mysql.createConnection({
         host:     'localhost',
-        user:     'root',
-        password:  process.env.PASS,
+        user:     process.env.DB_USER,
+        password:  process.env.DB_PASS,
         database: 'kanye'
 
 })
